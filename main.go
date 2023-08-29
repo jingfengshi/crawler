@@ -8,7 +8,10 @@ import (
 	transform "golang.org/x/text/transform"
 	"io/ioutil"
 	"net/http"
+	"regexp"
 )
+
+var headerRe = regexp.MustCompile(`<div class="small_cardcontent_"[\s\S]*?<h2>[\s\S]*?<a.*?target="_blank">([\s\S]*?)</a>`)
 
 func main() {
 	url := "https://www.thepaper.cn/"
@@ -32,8 +35,11 @@ func main() {
 		fmt.Println("read content failed:%v", err)
 		return
 	}
-
-	fmt.Println("body:", string(body))
+	matches := headerRe.FindAll(body, -1)
+	fmt.Println(matches)
+	for _, m := range matches {
+		fmt.Println("fetch card news:", string(m[1]))
+	}
 }
 
 func Fetch(url string) ([]byte, error) {
