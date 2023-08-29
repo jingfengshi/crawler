@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
+	"github.com/antchfx/htmlquery"
 	"golang.org/x/net/html/charset"
 	"golang.org/x/text/encoding"
 	transform "golang.org/x/text/transform"
@@ -35,10 +37,14 @@ func main() {
 		fmt.Println("read content failed:%v", err)
 		return
 	}
-	matches := headerRe.FindAll(body, -1)
-	fmt.Println(matches)
-	for _, m := range matches {
-		fmt.Println("fetch card news:", string(m[1]))
+
+	doc, err := htmlquery.Parse(bytes.NewReader(body))
+	if err != nil {
+		fmt.Println("htmlquery.Parse failed:%v", err)
+	}
+	nodes := htmlquery.Find(doc, `//div[@class="small_toplink__GmZhY"]//a[@target="_blank"]/h2`)
+	for _, node := range nodes {
+		fmt.Println("fetch card ", node.FirstChild.Data)
 	}
 }
 
