@@ -40,12 +40,13 @@ func main() {
 		Timeout: 3000 * time.Millisecond,
 	}
 
-	s := engine.ScheduleEngine{
-		WorkCount: 5,
-		Fetcher:   f,
-		Logger:    logger,
-		Seeds:     seeds,
-	}
+	s := engine.NewSchedule(
+		engine.WithFetcher(f),
+		engine.WithLogger(logger),
+		engine.WithWorkCount(5),
+		engine.WithSeeds(seeds),
+	)
+
 	s.Run()
 
 }
